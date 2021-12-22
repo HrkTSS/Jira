@@ -1,6 +1,8 @@
 GET http://localhost:3000/api/v1/epics
+Authorization:  Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjUsImlhdCI6MTY0MDE3MzMwNSwiZXhwIjoxNjQwMTc2OTA1fQ.VmRzJrY3tv9hm3S64oRzP_LX1fxbqcFh2_tTpDsuuj0
 //Authorization:  Basic aGFycnk6cGFzcw==
 # Authorization:  Basic cmFtOnBhc3M=
+
 ###
 POST http://localhost:3000/api/v1/epics
 Content-Type:application/json
@@ -98,6 +100,15 @@ POST http://localhost:3000/api/v1/auth/register
 Content-Type:application/json
 
 {
-    "username":"ram",
+    "username":"gokul",
+    "password":"pass"
+}
+
+###
+POST  http://localhost:3000/api/v1/auth/token
+Content-Type:application/json
+
+{
+    "username":"gokul",
     "password":"pass"
 }

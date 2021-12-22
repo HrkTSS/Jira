@@ -1,4 +1,5 @@
 const knex = require("../db");
+const jwt = require("jsonwebtoken")
 
 function authorizeRequest(req, res, next) {
   if (req.headers.authorization) {
@@ -13,7 +14,7 @@ function authorizeRequest(req, res, next) {
 
 async function basicAuthenticUser(req, res, next) {
   const userInfo = req.headers.authorization;
-  if (!userInfo) {
+  if (!userInfo || !userInfo.startsWith("Basic ")) {
     return next();
   }
   const credentials = userInfo.split(" ")[1];
@@ -147,11 +148,41 @@ async function isOwnerOfItem(req, res, next) {
   res.status(401).send({ message: "Permission denied" });
 }
 
+async function jwtAuthentication(req, res, next) {
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith("Bearer ")) {
+    const token = authHeader.split(" ")[1];
+
+    if (token) {
+      try {
+        const decoded = jwt.verify(token, "secret");
+        console.log(">>------>>>>>>", decoded);
+        const user = await knex("users")
+          .select()
+          .where({ id: decoded.userId })
+          .first();
+        if (user) {
+          req.user = user;
+          next();
+          return;
+          
+        }
+      } catch (err) {
+        console.log(err)
+        res.status(401).send({ message: "Invalid token " });
+        return;
+      }
+    }
+    next();
+  }
+}
+
 module.exports = {
   authorizeRequest,
   authenticateUser: basicAuthenticUser,
   isLoggedIn,
   isOwnerOfEpic,
   isOwnerOfCategory,
-  isOwnerOfItem
+  isOwnerOfItem,
+  jwtAuthentication,
 };

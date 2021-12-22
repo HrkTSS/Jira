@@ -1,4 +1,3 @@
-const e = require("express");
 const express = require("express");
 
 const router = express.Router();
@@ -8,9 +7,10 @@ const {
   authenticateUser,
   isLoggedIn,
   isOwnerOfEpic,
+  jwtAuthentication
 } = require("../middleware/auth");
 
-router.get("/", authenticateUser, isLoggedIn, async (req, res) => {
+router.get("/", authenticateUser, jwtAuthentication,isLoggedIn, async (req, res) => {
   res.send(await epicsService.getAllEpics(req.user.id));
 });
 
